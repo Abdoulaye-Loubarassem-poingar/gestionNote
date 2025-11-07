@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Ajouter une note{% endblock %}
+{% block title %}Modifier une note{% endblock %}
 {% block content %}
-<h2 class="mb-4">➕ Ajouter une note</h2>
-<form method="POST">
+<h2 class="mb-4">✏️ Modifier la note</h2>
+<form method="POST" action="{{ url_for('notes.edit_note', note_id=note.id) }}">
   {{ form.hidden_tag() }}
   <div class="mb-3">{{ form.title.label(class="form-label") }} {{ form.title(class="form-control") }}</div>
   <div class="mb-3">{{ form.content.label(class="form-label") }} {{ form.content(class="form-control", rows=5) }}</div>
-  {{ form.submit(class="btn btn-success w-100") }}
+  {{ form.submit(class="btn btn-warning w-100", value='Enregistrer') }}
 </form>
 <a href="{{ url_for('notes.view_notes') }}" class="btn btn-secondary w-100 mt-3">⬅️ Retour</a>
 {% endblock %}

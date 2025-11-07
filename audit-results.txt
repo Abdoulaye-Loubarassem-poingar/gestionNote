@@ -1,0 +1,74 @@
+﻿--- Audit dÃ©marrÃ©: 11/05/2025 10:00:53 ---
+
+
+== Raw netstat output (again) for parsing ==
+
+
+== PID detected ==
+
+No PID parsed from netstat output. If nothing listens on :5000, server may not be running.
+
+== openssl test ==
+
+openssl not found or error: Le terme « openssl » n'est pas reconnu comme nom d'applet de commande, fonction, fichier de script ou programme exécutable. Vérifiez l'orthographe du nom, ou si un chemin d'accès existe, vérifiez que le chemin d'accès est correct et réessayez.
+
+== netsh winhttp show proxy ==
+
+
+Param├¿tres de proxy WinHTTP actuels┬á:
+
+    Acc├¿s direct (sans serveur proxy).
+
+
+== Environment proxy variables ==
+
+
+
+== Get-NetFirewallProfile ==
+
+
+Name    Enabled
+----    -------
+Domain     True
+Private    True
+Public     True
+
+
+
+
+== hosts file (last 50 lines) ==
+
+# Copyright (c) 1993-2009 Microsoft Corp.
+#
+# This is a sample HOSTS file used by Microsoft TCP/IP for Windows.
+#
+# This file contains the mappings of IP addresses to host names. Each
+# entry should be kept on an individual line. The IP address should
+# be placed in the first column followed by the corresponding host name.
+# The IP address and the host name should be separated by at least one
+# space.
+#
+# Additionally, comments (such as these) may be inserted on individual
+# lines or following the machine name denoted by a '#' symbol.
+#
+# For example:
+#
+#      102.54.94.97     rhino.acme.com          # source server
+#       38.25.63.10     x.acme.com              # x client host
+
+# localhost name resolution is handled within DNS itself.
+#	127.0.0.1       localhost
+#	::1             localhost
+
+== python --version ==
+
+Python 3.13.7
+
+== where python ==
+
+C:\flask\gestionNote\venv\Scripts\python.exe
+C:\Users\spoin\AppData\Local\Microsoft\WindowsApps\python.exe
+
+== --- Audit terminÃ©: 11/05/2025 10:00:57 --- ==
+
+

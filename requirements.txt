@@ -1,4 +1,33 @@
-Flask>=2.3
-Flask-WTF>=1.1
-Flask-Bcrypt>=1.0
-Flask-SQLAlchemy>=3.0
+# --- Core Flask ---
+Flask==3.0.3
+Werkzeug==3.0.3
+Jinja2==3.1.4
+itsdangerous==2.2.0
+
+# --- Extensions Flask ---
+Flask-SQLAlchemy==3.1.1
+Flask-Bcrypt==1.0.1
+Flask-WTF==1.2.1
+Flask-Login==0.6.3
+Flask-Limiter==3.9.2
+Flask-Talisman==1.1.0
+
+# --- Database & ORM ---
+SQLAlchemy==2.0.36
+
+# --- Security & Validation ---
+email-validator==2.2.0
+WTForms==3.1.2
+bcrypt==4.2.0
+argon2-cffi==23.1.0
+
+# --- Utilities ---
+python-dotenv==1.0.1
+requests==2.32.3
+
+# --- Optional for HTTPS local (if you plan to test SSL) ---
+cryptography==43.0.1
+pyOpenSSL==24.2.1
+
+# --- Logging & Debug ---
+colorama==0.4.6

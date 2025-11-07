@@ -1,48 +1,100 @@
+# app.py
+import os
 from flask import Flask, render_template
-from extensions import db, bcrypt
+from extensions import db, bcrypt, csrf, login_manager, limiter, talisman
 from auth.routes import auth_bp
 from notes.routes import notes_bp
-import os
-from datetime import timedelta
+from models import User
+from werkzeug.middleware.proxy_fix import ProxyFix
+from dotenv import load_dotenv
+import logging
 
-app = Flask(__name__, instance_relative_config=True)
-app.config['SECRET_KEY'] = 'un_secret_long_et_unique'
+load_dotenv()
 
-# Chemin absolu pour la DB
-basedir = os.path.abspath(os.path.dirname(__file__))
-db_path = os.path.join(basedir, 'instance', 'notes.db')
-os.makedirs(os.path.dirname(db_path), exist_ok=True)
+def create_app():
+    app = Flask(__name__, instance_relative_config=True)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + db_path
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    # Configuration
+    app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'change_me_long_random')
+    # DB path absolute to avoid path issues
+    db_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "instance", "app.db")
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', f"sqlite:///{db_path}")
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Expiration de session
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)
+    # Session / cookies hardening
+    app.config.update(
+        SESSION_COOKIE_HTTPONLY=True,
+        SESSION_COOKIE_SECURE=False,   # en dev local laisser False; mettre True en prod avec HTTPS
+        REMEMBER_COOKIE_HTTPONLY=True,
+        REMEMBER_COOKIE_SECURE=False,  # idem
+        SESSION_COOKIE_SAMESITE='Lax',
+    )
 
-# Initialiser extensions
-db.init_app(app)
-bcrypt.init_app(app)
+    # Initialize extensions
+    db.init_app(app)
+    bcrypt.init_app(app)
+    csrf.init_app(app)
+    login_manager.init_app(app)
+    limiter.init_app(app)
 
-# Enregistrer les Blueprints
-app.register_blueprint(auth_bp)
-app.register_blueprint(notes_bp)
+    # Flask-Login configuration and user loader
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message_category = 'info'
 
-# Création DB
-with app.app_context():
-    db.create_all()
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
 
-# En-têtes sécurité
-@app.after_request
-def set_secure_headers(response):
-    response.headers['X-Frame-Options'] = 'DENY'
-    response.headers['X-Content-Type-Options'] = 'nosniff'
-    response.headers['Content-Security-Policy'] = "default-src 'self'; script-src 'self'; style-src 'self' https://cdn.jsdelivr.net"
-    response.headers['Referrer-Policy'] = 'no-referrer'
-    return response
+    # Talisman / security headers (force_https=False in dev)
+    csp = {
+        'default-src': ["'self'"],
+        'script-src': ["'self'"],
+        'style-src': ["'self'"],
+    }
+    talisman.init_app(
+        app,
+        content_security_policy=csp,
+        force_https=False,  # mettre True en prod + SESSION_COOKIE_SECURE True
+    )
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+    # Proxy fix if behind reverse proxy
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
-if __name__ == '__main__':
-    app.run(debug=True)
+    # Register blueprints
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(notes_bp)
+
+    # Simple index route
+    @app.route('/')
+    def index():
+        return render_template('index.html')
+
+    # Error handlers
+    @app.errorhandler(500)
+    def internal_error(e):
+        app.logger.exception("Server error: %s", e)
+        return render_template('500.html'), 500
+
+    @app.errorhandler(404)
+    def not_found(e):
+        return render_template('404.html'), 404
+
+    # Logging to file
+    handler = logging.FileHandler('app.log', encoding='utf-8')
+    handler.setLevel(logging.INFO)
+    app.logger.addHandler(handler)
+
+    return app
+
+if __name__ == "__main__":
+    app = create_app()
+
+    # ensure instance folder exists
+    os.makedirs(os.path.join(os.path.abspath(os.path.dirname(__file__)), "instance"), exist_ok=True)
+
+    # create DB
+    with app.app_context():
+        db.create_all()
+
+    # Run app (debug True in dev)
+    app.run(host="127.0.0.1", port=5000, debug=True)

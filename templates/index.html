@@ -1,8 +1,24 @@
 {% extends "base.html" %}
+{% block title %}Accueil - Gestion de notes{% endblock %}
+
 {% block content %}
-<div class="text-center">
-    <h1>Bienvenue sur la gestion de notes</h1>
-    <a href="{{ url_for('auth.login') }}" class="btn btn-primary me-2 mt-3">Connexion</a>
-    <a href="{{ url_for('auth.register') }}" class="btn btn-success mt-3">Inscription</a>
-</div>
+<h1 class="mb-4">📒 Gestion de notes</h1>
+
+{% if current_user.is_authenticated %}
+  <p class="lead">Bonjour <strong>{{ current_user.username|e }}</strong> 👋</p>
+
+  <div class="d-grid gap-3">
+    <a href="{{ url_for('notes.add_note') }}" class="btn btn-success">➕ Ajouter une note</a>
+    <a href="{{ url_for('notes.view_notes') }}" class="btn btn-primary">📚 Mes notes</a>
+    <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">🚪 Déconnexion</a>
+  </div>
+
+{% else %}
+  <p class="lead">Bienvenue ! Connectez-vous ou inscrivez-vous pour gérer vos notes.</p>
+
+  <div class="d-grid gap-3">
+    <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Se connecter</a>
+    <a href="{{ url_for('auth.register') }}" class="btn btn-success">Créer un compte</a>
+  </div>
+{% endif %}
 {% endblock %}
