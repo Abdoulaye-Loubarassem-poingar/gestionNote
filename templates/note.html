@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Mes Notes{% endblock %}
+
+{% block content %}
+
+<h2 class="fw-bold text-center mb-4">📒 Mes Notes</h2>
+
+<!-- Actions -->
+<div class="d-flex justify-content-center gap-3 mb-4">
+    <a href="{{ url_for('notes.add_note') }}" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i> Nouvelle note
+    </a>
+
+    <a href="{{ url_for('notes.export_pdf', q=q or '', tag=tag_filter or '') }}"
+       class="btn btn-outline-secondary">
+        <i class="bi bi-file-earmark-pdf"></i> Exporter (HTML)
+    </a>
+
+    <a href="{{ url_for('notes.backup_db') }}" class="btn btn-outline-secondary">
+        <i class="bi bi-hdd"></i> Sauvegarde DB
+    </a>
+</div>
+
+<!-- Recherche -->
+<div class="page-container">
+    <form method="get" action="{{ url_for('notes.dashboard') }}" class="form-card mb-4">
+        <div class="row g-3">
+
+            <div class="col-md-7">
+                <input name="q" value="{{ q }}" class="form-control"
+                       placeholder="Rechercher une note (titre ou contenu)…">
+            </div>
+
+            <div class="col-md-3">
+                <select name="tag" class="form-select">
+                    <option value="">Tous les tags</option>
+                    {% for t in user_tags %}
+                        <option value="{{ t }}" {% if t == tag_filter %}selected{% endif %}>{{ t }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-2 d-grid">
+                <button class="btn btn-secondary">Chercher</button>
+            </div>
+
+        </div>
+    </form>
+</div>
+
+<!-- Notes -->
+{% if notes %}
+<div class="row g-4">
+    {% for note in notes %}
+    <div class="col-md-4">
+        <div class="card-modern h-100 d-flex flex-column justify-content-between">
+
+            <!-- Content -->
+            <div>
+                <h5 class="fw-bold">{{ note.title|e }}</h5>
+                <p class="text-muted">
+                    {{ note.content[:180]|e }}
+                    {% if note.content|length > 180 %}...{% endif %}
+                </p>
+            </div>
+
+            <!-- Footer -->
+            <div>
+                <!-- Tags -->
+                {% if note.tags %}
+                <div class="mb-2 d-flex flex-wrap gap-1">
+                    {% for tg in note.tags %}
+                        <span class="badge bg-info text-dark px-2 py-1">{{ tg.name }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                    <small class="text-muted">
+                        {{ note.created_at.strftime('%d/%m/%Y') }}
+                    </small>
+
+                    <div class="d-flex gap-2">
+
+                        <!-- Edit -->
+                        <a href="{{ url_for('notes.edit_note', note_id=note.id) }}"
+                           class="btn btn-sm btn-outline-warning">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+
+                        <!-- Delete -->
+                        <form method="POST"
+                              action="{{ url_for('notes.delete_note', note_id=note.id) }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button onclick="return confirm('Supprimer cette note ?')"
+                                    class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Pagination -->
+<nav class="mt-4" aria-label="Pagination">
+    <ul class="pagination justify-content-center">
+
+        {% if page > 1 %}
+        <li class="page-item">
+            <a class="page-link"
+                href="{{ url_for('notes.dashboard', page=page-1, q=q, tag=tag_filter) }}">
+                Précédent
+            </a>
+        </li>
+        {% endif %}
+
+        <li class="page-item disabled">
+            <span class="page-link">
+                Page {{ page }} / {{ last_page }}
+            </span>
+        </li>
+
+        {% if page < last_page %}
+        <li class="page-item">
+            <a class="page-link"
+                href="{{ url_for('notes.dashboard', page=page+1, q=q, tag=tag_filter) }}">
+                Suivant
+            </a>
+        </li>
+        {% endif %}
+
+    </ul>
+</nav>
+
+{% else %}
+<div class="text-center mt-5">
+    <p class="text-muted">Aucune note trouvée.</p>
+    <a href="{{ url_for('notes.add_note') }}" class="btn btn-primary">
+        + Ajouter une note
+    </a>
+</div>
+{% endif %}
+
+{% endblock %}

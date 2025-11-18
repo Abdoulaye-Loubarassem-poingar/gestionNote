@@ -1,26 +1,42 @@
 {% extends "base.html" %}
 {% block title %}Inscription{% endblock %}
+
 {% block content %}
-<h2 class="mb-4">📝 Créer un compte</h2>
-<form method="POST">
-  {{ form.hidden_tag() }}
-  <div class="mb-3">
-    {{ form.username.label(class="form-label") }}
-    {{ form.username(class="form-control", placeholder="Nom d'utilisateur") }}
-  </div>
-  <div class="mb-3">
-    {{ form.email.label(class="form-label") }}
-    {{ form.email(class="form-control", placeholder="Adresse email") }}
-  </div>
-  <div class="mb-3">
-    {{ form.password.label(class="form-label") }}
-    {{ form.password(class="form-control", placeholder="Mot de passe") }}
-  </div>
-  <div class="mb-3">
-    {{ form.confirm_password.label(class="form-label") }}
-    {{ form.confirm_password(class="form-control", placeholder="Confirmez le mot de passe") }}
-  </div>
-  {{ form.submit(class="btn btn-success w-100") }}
-</form>
-<p class="mt-3">Déjà un compte ? <a href="{{ url_for('auth.login') }}">Connectez-vous ici</a></p>
+<div class="auth-container">
+    <div class="auth-card">
+        <h3 class="text-center fw-bold mb-2">Créer un compte</h3>
+        <p class="text-center text-muted mb-4">Rejoignez votre espace de notes</p>
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+                {{ form.username.label(class="form-label fw-bold") }}
+                {{ form.username(class="form-control", placeholder="Nom d'utilisateur") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.email.label(class="form-label fw-bold") }}
+                {{ form.email(class="form-control", placeholder="Adresse email") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.password.label(class="form-label fw-bold") }}
+                {{ form.password(class="form-control", placeholder="Mot de passe") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.confirm_password.label(class="form-label fw-bold") }}
+                {{ form.confirm_password(class="form-control", placeholder="Confirmez le mot de passe") }}
+            </div>
+
+            <button class="btn btn-success w-100 py-2 fw-bold">Créer le compte</button>
+        </form>
+
+        <p class="text-center mt-3">
+            Déjà inscrit ?
+            <a href="{{ url_for('auth.login') }}">Se connecter</a>
+        </p>
+    </div>
+</div>
 {% endblock %}

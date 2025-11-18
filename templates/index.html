@@ -1,24 +1,79 @@
 {% extends "base.html" %}
-{% block title %}Accueil - Gestion de notes{% endblock %}
+{% block title %}Accueil{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">📒 Gestion de notes</h1>
+<div class="py-5">
+  <div class="row align-items-center">
+    <div class="col-lg-6">
+      <h1 class="display-5 fw-bold mb-3">Gestion Notes — Simple, rapide et élégante</h1>
+      <p class="lead text-muted mb-4">
+        Prends des notes, organise-les avec des tags, exporte en PDF et retrouve-les en un clic.
+        Interface claire, synchronisée et prête pour le travail quotidien.
+      </p>
 
-{% if current_user.is_authenticated %}
-  <p class="lead">Bonjour <strong>{{ current_user.username|e }}</strong> 👋</p>
+      <div class="d-flex gap-2">
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('notes.dashboard') }}" class="btn btn-primary btn-lg">
+            <i class="bi bi-list-task me-2"></i> Voir mes notes
+          </a>
+          <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-secondary btn-lg">
+            <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+          </a>
+        {% else %}
+          <a href="{{ url_for('auth.register') }}" class="btn btn-success btn-lg">
+            <i class="bi bi-person-plus me-2"></i> Créer un compte
+          </a>
+          <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary btn-lg">
+            <i class="bi bi-box-arrow-in-right me-2"></i> Connexion
+          </a>
+        {% endif %}
+      </div>
 
-  <div class="d-grid gap-3">
-    <a href="{{ url_for('notes.add_note') }}" class="btn btn-success">➕ Ajouter une note</a>
-    <a href="{{ url_for('notes.view_notes') }}" class="btn btn-primary">📚 Mes notes</a>
-    <a href="{{ url_for('auth.logout') }}" class="btn btn-secondary">🚪 Déconnexion</a>
+      <div class="mt-4 text-muted">
+        <small>Fonctionnalités : tags, recherche, pagination, export PDF, sauvegarde.</small>
+      </div>
+    </div>
+
+    <div class="col-lg-6 d-none d-lg-block text-center">
+      <div class="card card-custom p-4 mx-auto" style="max-width:520px;">
+        <div class="text-center mb-3">
+          <i class="bi bi-journal-richtext" style="font-size:48px; opacity:.9;"></i>
+        </div>
+        <h4 class="fw-bold">Ton espace de notes, organisé</h4>
+        <p class="text-muted">Des cartes propres, un tri intuitif et un design agréable pour rester concentré.</p>
+        <div class="d-flex gap-2 justify-content-center mt-3">
+          <span class="badge bg-primary">Responsive</span>
+          <span class="badge bg-secondary">Sécurisé</span>
+          <span class="badge bg-success">Export PDF</span>
+        </div>
+      </div>
+    </div>
   </div>
 
-{% else %}
-  <p class="lead">Bienvenue ! Connectez-vous ou inscrivez-vous pour gérer vos notes.</p>
+  <hr class="my-5">
 
-  <div class="d-grid gap-3">
-    <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Se connecter</a>
-    <a href="{{ url_for('auth.register') }}" class="btn btn-success">Créer un compte</a>
+  <div class="row text-center">
+    <div class="col-md-4 mb-3">
+      <div class="card card-custom p-3 h-100">
+        <i class="bi bi-search fs-2 mb-2"></i>
+        <h5 class="fw-bold">Recherche rapide</h5>
+        <p class="text-muted small">Retrouve tes notes par texte ou par tag.</p>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card card-custom p-3 h-100">
+        <i class="bi bi-shield-lock fs-2 mb-2"></i>
+        <h5 class="fw-bold">Sécurité</h5>
+        <p class="text-muted small">Mots de passe hachés, CSRF, rate-limit pour la connexion.</p>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card card-custom p-3 h-100">
+        <i class="bi bi-file-earmark-pdf fs-2 mb-2"></i>
+        <h5 class="fw-bold">Exporter</h5>
+        <p class="text-muted small">Télécharge tes notes en PDF pour les partager ou archiver.</p>
+      </div>
+    </div>
   </div>
-{% endif %}
+</div>
 {% endblock %}

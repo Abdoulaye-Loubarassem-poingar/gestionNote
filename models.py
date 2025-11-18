@@ -1,48 +1,61 @@
 # models.py
+from datetime import datetime
+import secrets
 from extensions import db
 from flask_login import UserMixin
-from datetime import datetime, timedelta
+
+note_tag = db.Table(
+    'note_tag',
+    db.Column('note_id', db.Integer, db.ForeignKey('note.id'), primary_key=True),
+    db.Column('tag_id', db.Integer, db.ForeignKey('tag.id'), primary_key=True)
+)
 
 class User(db.Model, UserMixin):
-    __tablename__ = 'user'
+    __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(200), nullable=False)
-    notes = db.relationship('Note', backref='author', lazy=True)
+    username = db.Column(db.String(120), unique=True, nullable=False)
+    email = db.Column(db.String(255), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
 
-    # --- champs pour verrouillage / anti-brute-force ---
-    failed_login_attempts = db.Column(db.Integer, default=0, nullable=False)
-    last_failed_login_at = db.Column(db.DateTime, nullable=True)
-    locked_until = db.Column(db.DateTime, nullable=True)
+    api_token = db.Column(db.String(64), unique=True, index=True, nullable=True)
 
-    def is_locked(self):
-        """Retourne True si le compte est temporairement verrouillé."""
-        if self.locked_until and datetime.utcnow() < self.locked_until:
-            return True
-        return False
+    notes = db.relationship("Note", backref="owner", lazy="dynamic")
+    reminders = db.relationship("Reminder", back_populates="user", lazy="dynamic")
 
-    def reset_lock(self):
-        self.failed_login_attempts = 0
-        self.last_failed_login_at = None
-        self.locked_until = None
-
-    def register_failed_attempt(self, lock_threshold=5, lock_seconds=300):
-        """Incrémente le compteur et verrouille si seuil atteint.
-        lock_threshold: nombre d'essais max avant verrouillage
-        lock_seconds: durée du verrouillage en secondes
-        """
-        self.failed_login_attempts = (self.failed_login_attempts or 0) + 1
-        self.last_failed_login_at = datetime.utcnow()
-        if self.failed_login_attempts >= lock_threshold:
-            self.locked_until = datetime.utcnow() + timedelta(seconds=lock_seconds)
+    def generate_api_token(self):
+        token = secrets.token_hex(32)
+        self.api_token = token
         db.session.add(self)
         db.session.commit()
+        return token
 
+    def revoke_api_token(self):
+        self.api_token = None
+        db.session.commit()
 
 class Note(db.Model):
-    __tablename__ = 'note'
+    __tablename__ = "note"
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=False)
+    title = db.Column(db.String(200))
+    content = db.Column(db.Text)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    tags = db.relationship('Tag', secondary=note_tag, back_populates='notes')
+
+class Tag(db.Model):
+    __tablename__ = "tag"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), index=True)
+    notes = db.relationship('Note', secondary=note_tag, back_populates='tags')
+
+class Reminder(db.Model):
+    __tablename__ = "reminder"
+    id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    note_id = db.Column(db.Integer, db.ForeignKey('note.id'), nullable=True)
+    remind_at = db.Column(db.DateTime, nullable=False)
+    sent = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship("User", back_populates="reminders")
+    note = db.relationship("Note")

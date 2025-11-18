@@ -31,3 +31,5 @@ pyOpenSSL==24.2.1
 
 # --- Logging & Debug ---
 colorama==0.4.6
+
+reportlab==4.0.2

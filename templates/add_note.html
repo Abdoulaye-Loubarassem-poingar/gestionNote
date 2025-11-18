@@ -1,12 +1,38 @@
 {% extends "base.html" %}
 {% block title %}Ajouter une note{% endblock %}
+
 {% block content %}
-<h2 class="mb-4">➕ Ajouter une note</h2>
-<form method="POST">
-  {{ form.hidden_tag() }}
-  <div class="mb-3">{{ form.title.label(class="form-label") }} {{ form.title(class="form-control") }}</div>
-  <div class="mb-3">{{ form.content.label(class="form-label") }} {{ form.content(class="form-control", rows=5) }}</div>
-  {{ form.submit(class="btn btn-success w-100") }}
-</form>
-<a href="{{ url_for('notes.view_notes') }}" class="btn btn-secondary w-100 mt-3">⬅️ Retour</a>
+<div class="page-container">
+
+    <div class="form-card">
+        <h2 class="fw-bold mb-4 text-center">➕ Ajouter une note</h2>
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <div class="mb-3">
+                {{ form.title.label(class="form-label fw-bold") }}
+                {{ form.title(class="form-control", placeholder="Titre") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.content.label(class="form-label fw-bold") }}
+                {{ form.content(class="form-control", rows="5", placeholder="Contenu") }}
+            </div>
+
+            <div class="mb-3">
+                {{ form.tags.label(class="form-label fw-bold") }}
+                {{ form.tags(class="form-control", placeholder="ex: école, perso") }}
+                <small class="text-muted">Séparer les tags avec une virgule.</small>
+            </div>
+
+            <button class="btn btn-primary w-100 fw-bold py-2">
+                <i class="bi bi-check-circle"></i> Enregistrer
+            </button>
+
+            <a href="{{ url_for('notes.dashboard') }}" class="btn btn-link w-100 mt-2">Annuler</a>
+        </form>
+    </div>
+
+</div>
 {% endblock %}
