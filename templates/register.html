@@ -3,40 +3,45 @@
 
 {% block content %}
 <div class="auth-container">
-    <div class="auth-card">
-        <h3 class="text-center fw-bold mb-2">Créer un compte</h3>
-        <p class="text-center text-muted mb-4">Rejoignez votre espace de notes</p>
+  <div class="auth-card">
+    <h3 class="text-center fw-bold mb-2">Créer un compte</h3>
+    <p class="text-center text-muted mb-3">Mot de passe: min 8 caractères, 1 majuscule, 1 chiffre, 1 caractère spécial</p>
 
-        <form method="POST">
-            {{ form.hidden_tag() }}
+    <form method="POST">
+      {{ form.hidden_tag() }}
 
-            <div class="mb-3">
-                {{ form.username.label(class="form-label fw-bold") }}
-                {{ form.username(class="form-control", placeholder="Nom d'utilisateur") }}
-            </div>
+      <div class="mb-3">
+        {{ form.username.label(class="form-label fw-bold") }}
+        {{ form.username(class="form-control") }}
+        {% for e in form.username.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}
+      </div>
 
-            <div class="mb-3">
-                {{ form.email.label(class="form-label fw-bold") }}
-                {{ form.email(class="form-control", placeholder="Adresse email") }}
-            </div>
+      <div class="mb-3">
+        {{ form.email.label(class="form-label fw-bold") }}
+        {{ form.email(class="form-control") }}
+        {% for e in form.email.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}
+      </div>
 
-            <div class="mb-3">
-                {{ form.password.label(class="form-label fw-bold") }}
-                {{ form.password(class="form-control", placeholder="Mot de passe") }}
-            </div>
+      <div class="mb-3">
+        {{ form.password.label(class="form-label fw-bold") }}
+        {{ form.password(class="form-control") }}
+        {% for e in form.password.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}
+      </div>
 
-            <div class="mb-3">
-                {{ form.confirm_password.label(class="form-label fw-bold") }}
-                {{ form.confirm_password(class="form-control", placeholder="Confirmez le mot de passe") }}
-            </div>
+      <div class="mb-3">
+        {{ form.confirm_password.label(class="form-label fw-bold") }}
+        {{ form.confirm_password(class="form-control") }}
+        {% for e in form.confirm_password.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}
+      </div>
 
-            <button class="btn btn-success w-100 py-2 fw-bold">Créer le compte</button>
-        </form>
+      <div class="d-grid">
+        {{ form.submit(class="btn btn-success btn-lg") }}
+      </div>
+    </form>
 
-        <p class="text-center mt-3">
-            Déjà inscrit ?
-            <a href="{{ url_for('auth.login') }}">Se connecter</a>
-        </p>
-    </div>
+    <p class="text-center mt-3">
+      Déjà inscrit ? <a href="{{ url_for('auth.login') }}">Se connecter</a>
+    </p>
+  </div>
 </div>
 {% endblock %}

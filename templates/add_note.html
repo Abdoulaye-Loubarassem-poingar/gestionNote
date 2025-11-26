@@ -1,38 +1,49 @@
 {% extends "base.html" %}
 {% block title %}Ajouter une note{% endblock %}
-
 {% block content %}
 <div class="page-container">
+  <div class="form-card">
+    <h2 class="fw-bold mb-3 text-center">➕ Ajouter une note</h2>
 
-    <div class="form-card">
-        <h2 class="fw-bold mb-4 text-center">➕ Ajouter une note</h2>
+    <form method="POST">
+      {{ form.hidden_tag() }}
 
-        <form method="POST">
-            {{ form.hidden_tag() }}
+      <div class="mb-3">
+        {{ form.title.label(class="form-label fw-bold") }}
+        {{ form.title(class="form-control") }}
+      </div>
 
-            <div class="mb-3">
-                {{ form.title.label(class="form-label fw-bold") }}
-                {{ form.title(class="form-control", placeholder="Titre") }}
-            </div>
+      <div class="mb-3">
+        {{ form.content.label(class="form-label fw-bold") }}
+        {{ form.content(class="form-control", rows="6") }}
+      </div>
 
-            <div class="mb-3">
-                {{ form.content.label(class="form-label fw-bold") }}
-                {{ form.content(class="form-control", rows="5", placeholder="Contenu") }}
-            </div>
+      <div class="mb-3">
+        {{ form.tags.label(class="form-label fw-bold") }}
+        {{ form.tags(class="form-control") }}
+        <small class="text-muted">Sépare les tags par des virgules</small>
+      </div>
 
-            <div class="mb-3">
-                {{ form.tags.label(class="form-label fw-bold") }}
-                {{ form.tags(class="form-control", placeholder="ex: école, perso") }}
-                <small class="text-muted">Séparer les tags avec une virgule.</small>
-            </div>
+      <div class="mb-3">
+        {{ form.category.label(class="form-label fw-bold") }}
+        {{ form.category(class="form-control") }}
+        <small class="text-muted">Nom de la catégorie (ex: travail)</small>
+      </div>
 
-            <button class="btn btn-primary w-100 fw-bold py-2">
-                <i class="bi bi-check-circle"></i> Enregistrer
-            </button>
+      <div class="form-check mb-3">
+        {{ form.is_important(class="form-check-input") }}
+        {{ form.is_important.label(class="form-check-label") }}
+      </div>
 
-            <a href="{{ url_for('notes.dashboard') }}" class="btn btn-link w-100 mt-2">Annuler</a>
-        </form>
-    </div>
+      <div class="form-check mb-3">
+        {{ form.pinned(class="form-check-input") }}
+        {{ form.pinned.label(class="form-check-label") }}
+      </div>
 
+      <div class="d-grid">
+        {{ form.submit(class="btn btn-primary btn-lg") }}
+      </div>
+    </form>
+  </div>
 </div>
 {% endblock %}

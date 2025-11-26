@@ -3,36 +3,33 @@
 
 {% block content %}
 <div class="auth-container">
-    <div class="auth-card">
-        <h3 class="text-center fw-bold mb-2">Connexion</h3>
-        <p class="text-center text-muted mb-4">Accédez à vos notes</p>
+  <div class="auth-card">
+    <h3 class="text-center fw-bold mb-2">Connexion</h3>
+    <p class="text-center text-muted mb-3">Identifiant = Nom d'utilisateur ou Email</p>
 
-        <form method="POST">
-            {{ form.hidden_tag() }}
+    <form method="POST">
+      {{ form.hidden_tag() }}
 
-            <div class="mb-3">
-                {{ form.username.label(class="form-label fw-bold") }}
-                {{ form.username(class="form-control", placeholder="Nom d'utilisateur") }}
-                {% for e in form.username.errors %}
-                    <small class="text-danger">{{ e }}</small>
-                {% endfor %}
-            </div>
+      <div class="mb-3">
+        {{ form.identifier.label(class="form-label fw-bold") }}
+        {{ form.identifier(class="form-control", placeholder="Nom d'utilisateur ou Email") }}
+        {% for e in form.identifier.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}
+      </div>
 
-            <div class="mb-3">
-                {{ form.password.label(class="form-label fw-bold") }}
-                {{ form.password(class="form-control", placeholder="Mot de passe") }}
-                {% for e in form.password.errors %}
-                    <small class="text-danger">{{ e }}</small>
-                {% endfor %}
-            </div>
+      <div class="mb-3">
+        {{ form.password.label(class="form-label fw-bold") }}
+        {{ form.password(class="form-control", placeholder="Mot de passe") }}
+        {% for e in form.password.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}
+      </div>
 
-            <button class="btn btn-primary w-100 py-2 fw-bold">Se connecter</button>
-        </form>
+      <div class="d-grid">
+        {{ form.submit(class="btn btn-primary btn-lg") }}
+      </div>
+    </form>
 
-        <p class="text-center mt-3">
-            Pas encore de compte ?
-            <a href="{{ url_for('auth.register') }}">Créer un compte</a>
-        </p>
-    </div>
+    <p class="text-center mt-3">
+      Pas encore de compte ? <a href="{{ url_for('auth.register') }}">Créer un compte</a>
+    </p>
+  </div>
 </div>
 {% endblock %}
