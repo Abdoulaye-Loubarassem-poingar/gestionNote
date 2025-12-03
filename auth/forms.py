@@ -1,14 +1,14 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import DataRequired, Email, Length, ValidationError, EqualTo
+from wtforms.validators import DataRequired, Email, Length, ValidationError, EqualTo, Regexp
 from models import User
 import re
 
 class RegisterForm(FlaskForm):
-    username = StringField("Nom d'utilisateur", validators=[DataRequired(), Length(min=3, max=30)])
-    email = StringField("Email", validators=[DataRequired(), Email()])
-    password = PasswordField("Mot de passe", validators=[DataRequired(), Length(min=8)])
-    confirm_password = PasswordField("Confirmer le mot de passe", validators=[DataRequired(), EqualTo('password')])
+    username = StringField("Nom d'utilisateur", validators=[DataRequired(), Length(min=3, max=30,  message="Le nom doit faire entre 3 et 30 caractères.")])
+    email = StringField("Email", validators=[DataRequired(), Email(message="Email invalide.")])
+    password = PasswordField("Mot de passe", validators=[DataRequired(), Length(min=8, message="Minimum 8 caractères."), Regexp( r"^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).+$", message="Le mot de passe doit contenir : 1 majuscule, 1 chiffre, 1 caractère spécial.")])
+    confirm_password = PasswordField("Confirmer le mot de passe", validators=[DataRequired(), EqualTo("password", message="Les mots de passe doivent correspondre.")])
     submit = SubmitField("Créer un compte")
 
     def validate_email(self, field):
@@ -32,7 +32,6 @@ class RegisterForm(FlaskForm):
             )
 
 class LoginForm(FlaskForm):
-    # identifier permet username ou email
-    identifier = StringField("Nom d'utilisateur ou Email", validators=[DataRequired()])
-    password = PasswordField("Mot de passe", validators=[DataRequired()])
+    username = StringField("Nom d'utilisateur", validators=[DataRequired(message="Champ obligatoire.")])
+    password = PasswordField("Mot de passe",validators=[DataRequired(message="Champ obligatoire.")])
     submit = SubmitField("Connexion")

@@ -9,11 +9,13 @@
 
     <form method="POST">
       {{ form.hidden_tag() }}
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
 
       <div class="mb-3">
-        {{ form.identifier.label(class="form-label fw-bold") }}
-        {{ form.identifier(class="form-control", placeholder="Nom d'utilisateur ou Email") }}
-        {% for e in form.identifier.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}
+        {{ form.username.label(class="form-label fw-bold") }}
+        {{ form.username(class="form-control", placeholder="Nom d'utilisateur ou Email") }}
+        {% for e in form.username.errors %}<small class="text-danger">{{ e }}</small>{% endfor %}
       </div>
 
       <div class="mb-3">

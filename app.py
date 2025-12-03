@@ -9,14 +9,16 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
 import logging
 
+
+
 load_dotenv()
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
 
-    # =========
+   
     # SECURITY / CONFIG
-    # =========
+    
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'change_me_long_random')
 
     # DATABASE
@@ -39,9 +41,9 @@ def create_app():
         REMEMBER_COOKIE_SECURE=False
     )
 
-    # =========
+    
     # EXTENSIONS
-    # =========
+   
     db.init_app(app)
     bcrypt.init_app(app)
     csrf.init_app(app)
@@ -49,6 +51,7 @@ def create_app():
     limiter.init_app(app)
 
     # Flask-Login
+    limiter.init_app(app)
     login_manager.login_view = 'auth.login'
     login_manager.login_message_category = 'info'
 
@@ -56,9 +59,9 @@ def create_app():
     def load_user(user_id):
         return User.query.get(int(user_id))
 
-    # =========
+   
     # TALISMAN (CSP assoupli pour Bootstrap / JS)
-    # =========
+    
     csp = {
         'default-src': ["'self'"],
         'img-src': ["'self'", "data:"],
@@ -76,22 +79,22 @@ def create_app():
     # Fix reverse proxy
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1)
 
-    # =========
+    
     # BLUEPRINTS
-    # =========
+   
     app.register_blueprint(auth_bp)
     app.register_blueprint(notes_bp)
 
-    # =========
+    
     # ROUTES
-    # =========
+    
     @app.route('/')
     def index():
         return render_template('index.html')
 
-    # =========
+   
     # ERROR HANDLERS
-    # =========
+    
     @app.errorhandler(404)
     def not_found(e):
         return render_template('404.html'), 404
@@ -101,9 +104,9 @@ def create_app():
         app.logger.exception("500 Internal Server Error: %s", e)
         return render_template('500.html'), 500
 
-    # =========
+    
     # LOGGING
-    # =========
+    
     handler = logging.FileHandler('app.log', encoding='utf-8')
     handler.setLevel(logging.INFO)
     app.logger.addHandler(handler)
@@ -111,9 +114,9 @@ def create_app():
     return app
 
 
-# =======================================
+
 # RUN APP
-# =======================================
+
 if __name__ == "__main__":
     app = create_app()
 
