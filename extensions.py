@@ -14,6 +14,5 @@ bcrypt = Bcrypt()
 csrf = CSRFProtect()
 mail = Mail()
 login_manager = LoginManager()
-limiter = Limiter(key_func=lambda: "global")  # for dev. Configure properly for prod
+limiter = Limiter(key_func=get_remote_address) # for dev. Configure properly for prod
 talisman = Talisman()
-limiter = Limiter(get_remote_address)

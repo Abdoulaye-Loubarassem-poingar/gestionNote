@@ -24,8 +24,8 @@ def create_app():
     # DATABASE
     instance_dir = os.path.join(os.path.abspath(os.path.dirname(__file__)), "instance")
     os.makedirs(instance_dir, exist_ok=True)
-    db_path = os.path.join(instance_dir, "app.db")
-
+    db_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), "instance", "app.db")
+    
     app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{db_path}"
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 

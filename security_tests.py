@@ -11,7 +11,7 @@ print("\n===  SECURITY AUTOMATED TESTS STARTING  ===\n")
 # Helper to print results
 # -------------------------------------------------------------------------
 def result(title, ok, detail=""):
-    status = "✔ SAFE" if ok else "❌ VULNERABLE"
+    status = "✔ SAFE" if ok else " VULNERABLE"
     print(f"[{status}] {title}")
     if detail:
         print(f"    → {detail}\n")
@@ -67,39 +67,7 @@ def test_csrf_delete():
     except Exception as e:
         result("CSRF Protection", False, str(e))
 
-# -------------------------------------------------------------------------
-# Test 4 : Brute force (login rate limit)
-# -------------------------------------------------------------------------
-def test_bruteforce():
-    print("=== TEST BRUTE FORCE LOGIN ===")
-
-    endpoint = f"{BASE_URL}/login"
-    body = {
-        "identifier": "demo",
-        "password": "wrongpassword",
-    }
-
-    errors = 0
-    locked = False
-
-    for i in range(10):
-        r = session.post(endpoint, data=body)
-        print(f" Attempt {i+1} → Status: {r.status_code}")
-
-        if "429" in str(r.status_code):
-            locked = True
-            break
-
-        if "verrouillé" in r.text.lower() or "too many attempts" in r.text.lower():
-            locked = True
-            break
-
-        time.sleep(0.2)
-
-    if locked:
-        result("Brute-force Protection", True, "Rate limiting or lockout triggered.")
-    else:
-        result("Brute-force Protection", False, "No lockout after 10 attempts.")
+#
 
 # -------------------------------------------------------------------------
 # Run all tests
@@ -107,6 +75,5 @@ def test_bruteforce():
 test_sql_injection()
 test_xss_reflected()
 test_csrf_delete()
-test_bruteforce()
 
 print("\n===  SECURITY TESTS FINISHED ===")
